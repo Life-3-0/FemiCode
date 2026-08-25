@@ -1,0 +1,33 @@
+name: Import FemiCode media
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "femicode-media.zip"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: femicode-media-import
+  cancel-in-progress: false
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Extract media
+        run: unzip -o femicode-media.zip
+
+      - name: Commit media
+        run: |
+          rm femicode-media.zip
+          git config user.name "femicode-social-agent"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git commit -m "Import FemiCode media"
+          git push
